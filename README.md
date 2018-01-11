@@ -4,4 +4,4 @@ This is a chrome extension that improves steemit usability
 - Hovering on USD/SP values shows the value % change in the past 24h.
 
 
-Made by beercake https://steemit.com/utopian-io/@beercake
+Made by beercake https://steemit.com/@beercake

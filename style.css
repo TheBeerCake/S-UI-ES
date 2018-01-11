@@ -1,0 +1,6 @@
+.convertedValue span{
+    display:none;
+}
+.convertedValue:hover span{
+    display: inline;
+}

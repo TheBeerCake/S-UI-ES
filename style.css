@@ -1,6 +1,75 @@
-.convertedValue span{
-    display:none;
+.convertedValue{
+    display:inline-block;
+    margin:0px -2px 0 15px;
+    font-size:14px;
+    font-size: 0.8375rem;
+    position: relative;
 }
-.convertedValue:hover span{
-    display: inline;
+
+/* hover popup */
+
+.ses-price-popup{
+    background-color: #252830;
+    border:1px solid #434857;
+    border-radius: 4px;
+    padding:20px;
+    position: absolute;
+    top:30px;
+    left:0;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 150ms ease-in-out;
+    z-index: 300;
+}
+.convertedValue:hover .ses-price-popup{
+    opacity: 1;
+    top:25px;
+    transition: all 150ms ease-in-out;
+    transition-delay: 150ms;
+}
+.c-stats{
+    margin-bottom: 5px 0;
+}
+.ses-price-popup .c-stats .name{
+    font-size: 85%;
+    letter-spacing: .15em;
+    color: #828a9f;
+    text-transform: uppercase;
+}
+.ses-price-popup .c-stats .price{
+    font-weight: 300;
+    line-height: 1.1;
+    color: white;
+    font-size: 20px;
+}
+.delta{
+    display: inline-block;
+    padding: .4em;
+    font-size: 12px;
+    vertical-align: middle;
+}
+.delta::after{
+    content: "";
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+.delta.positive{
+    color:#06D6A9;
+}
+.delta.positive::after{
+    border-top: 0;
+    border-bottom: 4px solid;
+}
+.delta.negative{
+    color:#d60606;
+}
+.delta.negative::after{
+    border-bottom: 0;
+    border-top: 4px solid;
 }

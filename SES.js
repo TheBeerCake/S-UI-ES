@@ -141,10 +141,11 @@ function onURLChange(){
     let inWallet = _.contains(url,"transfers");
     let inProfile = (url.length >= 4) && url[3].indexOf("@") > -1;
     let inProfileFeed = (url.length == 4) && url[3].indexOf("@") > -1 || (url.length == 5) && url[3].indexOf("@") > -1 && url[4] == "feed"; 
-    console.log("feed",inFeed," new",inNew," in trending", inTrending,"in wallet", inWallet,"In profile",inProfile,"in profile feed",inProfileFeed);
+    //console.log("feed",inFeed," new",inNew," in trending", inTrending,"in wallet", inWallet,"In profile",inProfile,"in profile feed",inProfileFeed);
     if(inProfileFeed){
        setTimeout(()=>{ addResteemFilter()},150);
     }
+    throtledUpdatePrices();
 }
 
 function resetPostUrlChange(){
@@ -154,7 +155,7 @@ function resetPostUrlChange(){
 
 var resteemIcon = '<span id="ses-hide-resteem" class="Icon reblog" style="display: block; "><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448,192z"></path></svg></span>';
 function addResteemFilter(){
-    console.log("add resteem button");
+    //console.log("add resteem button");
    
     let header = $(".articles__header");
     if(header.length){
@@ -170,7 +171,7 @@ function addResteemFilter(){
     }
 }
 function updateResteems(){
-   console.log("Updated resteems");
+   //console.log("Updated resteems");
    
     let articles = $(".articles__summary");
     $.each(articles,function (key, el) {

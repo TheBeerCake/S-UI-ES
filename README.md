@@ -5,3 +5,5 @@ This is a chrome extension that improves steemit usability
 
 
 Made by beercake https://steemit.com/@beercake
+
+----------------Contributors------------------

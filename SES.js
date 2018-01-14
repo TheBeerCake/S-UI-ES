@@ -4,26 +4,32 @@ var sbdChange,
     steemChange = "+0";
 var sbdDelta,
     steemDelta = "";
-
+var oldUrl = ""
 var lastPostCount = 0;
+var hideResteems = false;
 
 
 
 var throtledDOMChanges = _.throttle(postListChanges, 1000);
-var throtledUpdate = _.throttle(updatePrices, 300);
+var throtledUpdatePrices = _.throttle(updatePrices, 300);
+var throtledUpdateResteems = _.throttle(updateResteems, 300);
 
 function postListChanges() {
     console.log("post list modified");
     let postCount = $(".PostsList__summaries").find("li").length;
     if (lastPostCount != postCount) {
-        throtledUpdate();
+        throtledUpdatePrices();
+        throtledUpdateResteems();
         lastPostCount = postCount;
     }
 }
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     lastPostCount = 0;
+    if(hasURLChanged()){
+        onURLChange();
+    }
     setTimeout(function () {
-        throtledUpdate();
+        throtledUpdatePrices();
         console.log("updated once");
         $("#posts_list").bind("DOMSubtreeModified", throtledDOMChanges);
     }, 300);
@@ -31,6 +37,7 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
 
 
 $(document).ready(function () {
+    getTabURL();
     getSTEEM();
     getSBD();
     setInterval(function () {
@@ -38,9 +45,8 @@ $(document).ready(function () {
         getSBD();
     }, 600000);
     setTimeout(() => {
-        throtledUpdate();
+        throtledUpdatePrices();
     }, 1000);
-
 
 
 });
@@ -89,7 +95,7 @@ function getSTEEM() {
                 steemDelta = "negative";
                 steemChange = " " + steemChange + "% /24h";
             }
-            throtledUpdate();
+            throtledUpdatePrices();
         });
 
 
@@ -109,7 +115,72 @@ function getSBD() {
             sbdDelta = "negative";
             sbdChange = "  " + sbdChange + "% /24h";
         }
-        throtledUpdate();
+        throtledUpdatePrices();
 
+    });
+}
+function getTabURL(){
+    return window.location.href;
+}
+function hasURLChanged(){
+    let newUrl = getTabURL();
+    if(oldUrl == newUrl){
+        return false;
+    }else{
+        oldUrl = newUrl;
+        return true;
+    }
+}
+
+function onURLChange(){
+    resetPostUrlChange();
+    let url = window.location.href.split("/");   
+    let inFeed = _.contains(url,"feed");
+    let inNew = _.contains(url,"created");
+    let inTrending = _.contains(url,"trending");
+    let inWallet = _.contains(url,"transfers");
+    let inProfile = (url.length >= 4) && url[3].indexOf("@") > -1;
+    let inProfileFeed = (url.length == 4) && url[3].indexOf("@") > -1 || (url.length == 5) && url[3].indexOf("@") > -1 && url[4] == "feed"; 
+    console.log("feed",inFeed," new",inNew," in trending", inTrending,"in wallet", inWallet,"In profile",inProfile,"in profile feed",inProfileFeed);
+    if(inProfileFeed){
+       setTimeout(()=>{ addResteemFilter()},150);
+    }
+}
+
+function resetPostUrlChange(){
+    hideResteems=false;
+    $("#ses-hide-resteem").remove();
+}
+
+var resteemIcon = '<span id="ses-hide-resteem" class="Icon reblog" style="display: block; "><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448,192z"></path></svg></span>';
+function addResteemFilter(){
+    console.log("add resteem button");
+   
+    let header = $(".articles__header");
+    if(header.length){
+        if(!header.find(".reblog").length){
+            header.append(resteemIcon);
+            hideResteems = false;
+            $("#ses-hide-resteem").on("click tap",function(){
+                hideResteems = !hideResteems;
+                $("#ses-hide-resteem").toggleClass("active");
+                updateResteems();
+            })
+        }
+    }
+}
+function updateResteems(){
+   console.log("Updated resteems");
+   
+    let articles = $(".articles__summary");
+    $.each(articles,function (key, el) {
+        let article = $(el);
+        if(hideResteems){
+            if(article.find(".articles__resteem").length > 0){
+                article.addClass("rest-hide");
+            }
+        }else{
+            article.removeClass("rest-hide");
+        }
     });
 }

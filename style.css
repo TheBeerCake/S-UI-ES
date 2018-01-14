@@ -31,7 +31,7 @@
     margin: 5px 0;
 }
 .ses-price-popup .c-stats .name{
-    margin-top: -11px;
+    margin-top: -3px;
     font-size: 85%;
     letter-spacing: .15em;
     color: #828a9f;
@@ -73,4 +73,28 @@
 .delta.negative::after{
     border-bottom: 0;
     border-top: 4px solid;
+}
+
+#ses-hide-resteem{
+    padding: 1px 1px 1px 2px;
+    border: 1px solid black;
+    margin-left: auto;
+    margin-top: 7px;
+    opacity: 0.6;
+}
+#ses-hide-resteem:hover{
+    opacity: 1;
+    cursor: pointer;
+}
+#ses-hide-resteem.active{
+    border-color: #b90000;
+}
+#ses-hide-resteem.active svg{
+    fill:#b90000;
+}
+.rest-hide{
+    display: none !important;
+}
+article.articles{
+    min-height: 70vh;
 }

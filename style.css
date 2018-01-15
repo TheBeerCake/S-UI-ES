@@ -99,3 +99,13 @@
 article.articles{
     min-height: 70vh;
 }
+
+/* responsive */
+@media screen and (max-width:1200px) {
+    #ses-hide-resteem{
+        display: block;
+        margin-top: -5px;
+        margin-right: 13px;
+    }
+
+}

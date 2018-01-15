@@ -47,7 +47,13 @@ $(document).ready(function () {
     setTimeout(() => {
         throtledUpdatePrices();
     }, 1000);
-
+    $("html").on("tap click",()=>{
+        setTimeout(() => {
+            throtledUpdatePrices();
+            throtledUpdateResteems();
+        }, 150);
+       
+    })
 
 });
 

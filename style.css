@@ -97,12 +97,12 @@
     display: none !important;
 }
 article.articles{
-    min-height: 70vh;
+    min-height: 100vh;
 }
 
 /* responsive */
 @media screen and (max-width:1200px) {
-    #ses-hide-resteem{
+    .PostsIndex #ses-hide-resteem{
         display: block;
         margin-top: -5px;
         margin-right: 13px;

@@ -29,6 +29,7 @@
 }
 .c-stats{
     margin: 5px 0;
+    line-height: 10px;
 }
 .ses-price-popup .c-stats .name{
     margin-top: -3px;
@@ -45,7 +46,7 @@
 }
 .delta{
     display: inline-block;
-    padding: .4em;
+    padding: 7px;
     font-size: 12px;
     vertical-align: middle;
     font-weight: 600;
@@ -75,7 +76,28 @@
     border-bottom: 0;
     border-top: 4px solid;
 }
+.total-value{
+    color: #cccccc;
+    margin: -10px 0 0px;
+    line-height: 32px;
+}
+.total-value.sep{
+    border-bottom: 1px solid #04a586;
+    margin-bottom: 10px;
 
+}
+.grad-line{
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0;
+    background: linear-gradient(319deg, #0e75bb, #b728ec, #05e6e8, #00ffbe);
+    background-size: 800% 800%;
+    -webkit-animation: gradient-shift 8s ease infinite;
+    -moz-animation: gradient-shift 8s ease infinite;
+    animation: gradient-shift 8s ease infinite;
+}
 #ses-hide-resteem{
     padding: 1px 1px 1px 2px;
     border: 1px solid black;
@@ -100,6 +122,23 @@ article.articles{
     min-height: 100vh;
 }
 
+
+
+@-webkit-keyframes gradient-shift {
+    0%{background-position:0% 34%}
+    50%{background-position:100% 67%}
+    100%{background-position:0% 34%}
+}
+@-moz-keyframes gradient-shift {
+    0%{background-position:0% 34%}
+    50%{background-position:100% 67%}
+    100%{background-position:0% 34%}
+}
+@keyframes gradient-shift { 
+    0%{background-position:0% 34%}
+    50%{background-position:100% 67%}
+    100%{background-position:0% 34%}
+}
 /* responsive */
 @media screen and (max-width:1200px) {
     .PostsIndex #ses-hide-resteem{

@@ -69,9 +69,11 @@ function updatePrices() {
 
         let youGetSP = (youGet / 2) / steemUSD;
         let youGetSBD = (youGet / 2) * sbdUSD;
-        let priceChangesSBD = "<div class='c-stats'> <div class='price'>" +sbdUSD+"$" +"<div class='delta "+sbdDelta+"'>"+sbdChange +"</div></div><div class='name'>STEEM DOLLARS (SBD)</div></div>";
-        let priceChangesSP = "<div class='c-stats'> <div class='price'>" +steemUSD+"$" +"<div class='delta "+steemDelta+"'>"+steemChange +"</div></div><div class='name'>STEEM (STEEM)</div></div>";
-        let popup ='<div class="ses-price-popup">'+priceChangesSBD+priceChangesSP+'</div>';
+        let priceChangesSBD = "<div class='c-stats'> <div class='price'>" + (+sbdUSD).toFixed(3)+"$" +"<div class='delta "+sbdDelta+"'>"+sbdChange +"</div></div><div class='name'>STEEM DOLLARS (SBD)</div></div>";
+        let priceChangesSP = "<div class='c-stats'> <div class='price'>" +(+steemUSD).toFixed(3)+"$" +"<div class='delta "+steemDelta+"'>"+steemChange +"</div></div><div class='name'>STEEM (STEEM)</div></div>";
+        let totalSBD = "<div class='total-value sep'>"+(youGet / 2).toFixed(2)+" SBD TOTAL</div>";
+        let totalSP = "<div class='total-value '>"+(youGetSP).toFixed(2)+" SP TOTAL</div>";
+        let popup ='<div class="ses-price-popup">'+priceChangesSBD+totalSBD+priceChangesSP+totalSP+'<div class="grad-line"></div></div>';
 
         let prices = "( " + (youGetSBD).toFixed(2) + " USD  , " + (youGetSP).toFixed(2) + " SP )"+popup;
         if (post.find(".convertedValue").length > 0) {

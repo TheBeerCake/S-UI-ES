@@ -4,7 +4,7 @@ var sbdChange,
     steemChange = "+0";
 var sbdDelta,
     steemDelta = "";
-var oldUrl = ""
+var oldUrl = "";
 var lastPostCount = 0;
 var hideResteems = false;
 
@@ -28,11 +28,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if(hasURLChanged()){
         onURLChange();
     }
-    setTimeout(function () {
-        throtledUpdatePrices();
-        console.log("updated once");
-        $("#posts_list").bind("DOMSubtreeModified", throtledDOMChanges);
-    }, 300);
 });
 
 
@@ -54,7 +49,12 @@ $(document).ready(function () {
         }, 150);
        
     })
-
+    $.initialize('.Voting__inner', function () {
+        throtledUpdatePrices();
+        throtledUpdateResteems();
+        console.log("detected new posts");
+        
+    });
 });
 
 function updatePrices() {

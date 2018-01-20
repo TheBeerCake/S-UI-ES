@@ -1,7 +1,7 @@
 {
   "name": "Steemit UI/UX enhancement suite",
   "description": "This is a chrome extension to improve user experience and add some new neat features to existing steemit page.",
-  "version": "0.0.0.8",
+  "version": "0.0.0.9",
   "icons":{"128":"icon.png"},
   "permissions": [
     "tabs", "https://steemit.com/*","activeTab"
@@ -11,7 +11,7 @@
     { 
       "run_at" :"document_idle",
       "matches": ["https://steemit.com/*"],
-      "js": ["vendor/jquery-1.12.4.min.js","vendor/underscore-min.js","SES.js"],
+      "js": ["vendor/jquery-1.12.4.min.js","vendor/underscore-min.js","vendor/jquery.initialize.min.js","SES.js"],
       "css": ["style.css"],
       "permissions": ["activeTab"]
     } ],

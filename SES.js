@@ -7,12 +7,13 @@ var sbdDelta,
 var oldUrl = "";
 var lastPostCount = 0;
 var hideResteems = false;
-
+var userPicUrl = "";
 
 
 var throtledDOMChanges = _.throttle(postListChanges, 1000);
 var throtledUpdatePrices = _.throttle(updatePrices, 300);
 var throtledUpdateResteems = _.throttle(updateResteems, 300);
+
 
 function postListChanges() {
     console.log("post list modified");
@@ -52,8 +53,17 @@ $(document).ready(function () {
     $.initialize('.Voting__inner', function () {
         throtledUpdatePrices();
         throtledUpdateResteems();
-        console.log("detected new posts");
+        //console.log("detected new posts");
         
+    });
+    $.initialize('.UserProfile__banner', ()=> {
+        let el = $(".UserProfile__banner").find(".Userpic");
+        el.on("click tap",(img)=>{
+            
+            userPicUrl = $(img.target).css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
+            console.log(userPicUrl);
+            
+        });
     });
 });
 
@@ -192,4 +202,13 @@ function updateResteems(){
             article.removeClass("rest-hide");
         }
     });
+}
+
+function updateVpProgress(){
+    let progress = 76;
+    let progressbar = '<div class="user-vp">'+
+    '  <div class="vp-value">'+progress+'% VP</div>'+
+    '  <div class="vp-progress"><div class="vp-progress-value" style="width:'+progress+'px;"></div></div>'+
+    '  <div class="vp-full-in">3h 12min till 100%</div>'+
+    '</div>';
 }

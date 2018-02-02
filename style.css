@@ -121,9 +121,38 @@
 article.articles{
     min-height: 100vh;
 }
-
-
-
+/* User voting power */
+.Header__top.header .columns.shrink{
+    display: flex;
+}
+.user-vp{
+    display: block;
+    height:  60px;
+    float:  left;
+    padding-top: 9px;
+}
+.vp-value{
+    font-size: 12px;    
+}
+.vp-progress{
+    display: flex;
+    width:  100%;
+    width: 100px;
+    height:  5px;
+    position:  relative;
+    background-color: #171f24;
+    justify-content:  flex-start;
+}
+.vp-progress-value{
+    height: 100%;
+    display:  block;
+    width:  0%;
+    background-color: #06d6a9;
+}
+.vp-full-in{
+    font-size: 9px;
+}
+/* gradients */
 @-webkit-keyframes gradient-shift {
     0%{background-position:0% 34%}
     50%{background-position:100% 67%}
@@ -139,6 +168,9 @@ article.articles{
     50%{background-position:100% 67%}
     100%{background-position:0% 34%}
 }
+
+
+
 /* responsive */
 @media screen and (max-width:1200px) {
     .PostsIndex #ses-hide-resteem{

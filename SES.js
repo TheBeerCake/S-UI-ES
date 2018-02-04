@@ -1,3 +1,4 @@
+steem.api.setOptions({ websocket: 'wss://rpc.buildteam.io' });
 var steemUSD,
     sbdUSD = 0;
 var sbdChange,
@@ -7,16 +8,16 @@ var sbdDelta,
 var oldUrl = "";
 var lastPostCount = 0;
 var hideResteems = false;
-var userPicUrl = "";
-
+var localUser = "";
 
 var throtledDOMChanges = _.throttle(postListChanges, 1000);
 var throtledUpdatePrices = _.throttle(updatePrices, 300);
 var throtledUpdateResteems = _.throttle(updateResteems, 300);
 
 
+
 function postListChanges() {
-    console.log("post list modified");
+    //console.log("post list modified");
     let postCount = $(".PostsList__summaries").find("li").length;
     if (lastPostCount != postCount) {
         throtledUpdatePrices();
@@ -47,6 +48,7 @@ $(document).ready(function () {
         setTimeout(() => {
             throtledUpdatePrices();
             throtledUpdateResteems();
+            setTimeout(()=>{updateUserVP();},3000);
         }, 150);
        
     })
@@ -56,14 +58,12 @@ $(document).ready(function () {
         //console.log("detected new posts");
         
     });
-    $.initialize('.UserProfile__banner', ()=> {
-        let el = $(".UserProfile__banner").find(".Userpic");
-        el.on("click tap",(img)=>{
-            
-            userPicUrl = $(img.target).css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
-            console.log(userPicUrl);
-            
-        });
+    $.initialize('.Header__userpic ', ()=> {
+        let el = $(".Header__userpic ").find(".Userpic");
+        let picUrl = el.css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
+        localUser =  picUrl.split("/")
+        localUser = localUser[localUser.length-2];
+        updateUserVP();
     });
 });
 
@@ -152,6 +152,7 @@ function hasURLChanged(){
 
 function onURLChange(){
     resetPostUrlChange();
+    updateUserVP();
     let url = window.location.href.split("/");   
     let inFeed = _.contains(url,"feed");
     let inNew = _.contains(url,"created");
@@ -184,7 +185,7 @@ function addResteemFilter(){
                 hideResteems = !hideResteems;
                 $("#ses-hide-resteem").toggleClass("active");
                 updateResteems();
-            })
+            });
         }
     }
 }
@@ -204,11 +205,26 @@ function updateResteems(){
     });
 }
 
-function updateVpProgress(){
-    let progress = 76;
-    let progressbar = '<div class="user-vp">'+
-    '  <div class="vp-value">'+progress+'% VP</div>'+
-    '  <div class="vp-progress"><div class="vp-progress-value" style="width:'+progress+'px;"></div></div>'+
-    '  <div class="vp-full-in">3h 12min till 100%</div>'+
-    '</div>';
+function updateUserVP(){
+    let progress = 0;
+    steem.api.getAccounts([localUser], function(err, result) {
+        var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
+         vpow = result[0].voting_power + (10000 * secondsago / 432000);
+         progress = Math.min(vpow / 100, 100);
+        let timeToFull = (100-progress)/0.0139344262295082;
+        let hours = Math.floor(timeToFull/60);
+        let minutes= Math.ceil(timeToFull%60);
+         let progressbar = '<div class="user-vp">'+
+         '  <div class="vp-value">'+progress.toFixed(2)+'% VP</div>'+
+         '  <div class="vp-progress"><div class="vp-progress-value" style="width:'+progress.toFixed(2)+'px;"></div></div>'+
+         '  <div class="vp-full-in">'+hours+'h '+minutes+'min till 100%</div>'+
+         '</div>';
+         let div =  $(".Header__top.header").find(".columns.shrink")
+         if(div.find(".user-vp").length>0){
+             div.find(".user-vp").remove();
+             div.prepend(progressbar);
+         }else{
+             div.prepend(progressbar);
+         }
+      });
 }

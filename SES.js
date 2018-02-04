@@ -1,4 +1,6 @@
-steem.api.setOptions({ websocket: 'wss://rpc.buildteam.io' });
+steem.api.setOptions({
+    websocket: 'wss://rpc.buildteam.io'
+});
 var steemUSD,
     sbdUSD = 0;
 var sbdChange,
@@ -27,7 +29,7 @@ function postListChanges() {
 }
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     lastPostCount = 0;
-    if(hasURLChanged()){
+    if (hasURLChanged()) {
         onURLChange();
     }
 });
@@ -37,6 +39,8 @@ $(document).ready(function () {
     getTabURL();
     getSTEEM();
     getSBD();
+    updateWhitelist();
+    updateBlacklist();
     setInterval(function () {
         getSTEEM();
         getSBD();
@@ -44,27 +48,69 @@ $(document).ready(function () {
     setTimeout(() => {
         throtledUpdatePrices();
     }, 1000);
-    $("html").on("tap click",()=>{
+    $("html").on("tap click", () => {
         setTimeout(() => {
             throtledUpdatePrices();
             throtledUpdateResteems();
-            setTimeout(()=>{updateUserVP();},3000);
+            setTimeout(() => {
+                updateUserVP();
+            }, 3000);
         }, 150);
-       
+
     })
     $.initialize('.Voting__inner', function () {
         throtledUpdatePrices();
         throtledUpdateResteems();
         //console.log("detected new posts");
-        
+
     });
-    $.initialize('.Header__userpic ', ()=> {
+    $.initialize('.Header__userpic ', () => {
         let el = $(".Header__userpic ").find(".Userpic");
-        let picUrl = el.css('background-image').replace(/^url\(['"]?/,'').replace(/['"]?\)$/,'');
-        localUser =  picUrl.split("/")
-        localUser = localUser[localUser.length-2];
+        let picUrl = el.css('background-image').replace(/^url\(['"]?/, '').replace(/['"]?\)$/, '');
+        localUser = picUrl.split("/")
+        localUser = localUser[localUser.length - 2];
         updateUserVP();
     });
+    $.initialize('.Author', (idx, el) => {
+        el = $(el);
+        let authorName = el.find(".ptc").text().split(" ")[0];
+
+        let wlButton = '<div class="wl-button" data-user="' + authorName + '"></div>';
+        let blButton = '<div class="bl-button" data-user="' + authorName + '"></div>';
+        wlButton = $(wlButton);
+        blButton = $(blButton);
+        wlButton.on("tap click", () => {
+            toggleWhitelist(authorName);
+    
+        });
+        blButton.on("tap click", () => {
+            toggleBlacklist(authorName);
+
+        });
+        el.append(wlButton);
+        el.append(blButton);
+        updateWhitelist();
+        updateBlacklist();
+    });
+    $.initialize(".articles__summary-header", (idx, el) => {
+        el = $(el);
+        let authorName = el.find(".user__name").find("a").text().split(" ")[0];
+        let wlButton = '<div class="wl-button" data-user="' + authorName + '"></div>';
+        let blButton = '<div class="bl-button" data-user="' + authorName + '"></div>';
+        wlButton = $(wlButton);
+        blButton = $(blButton);
+        wlButton.on("tap click", () => {
+            toggleWhitelist(authorName);
+        });
+        blButton.on("tap click", () => {
+            toggleBlacklist(authorName);
+        });
+        el.find(".user").append(wlButton);
+        el.find(".user").append(blButton);
+        updateWhitelist();
+        updateBlacklist();
+    });
+
 });
 
 function updatePrices() {
@@ -79,13 +125,13 @@ function updatePrices() {
 
         let youGetSP = (youGet / 2) / steemUSD;
         let youGetSBD = (youGet / 2) * sbdUSD;
-        let priceChangesSBD = "<div class='c-stats'> <div class='price'>" + (+sbdUSD).toFixed(3)+"$" +"<div class='delta "+sbdDelta+"'>"+sbdChange +"</div></div><div class='name'>STEEM DOLLARS (SBD)</div></div>";
-        let priceChangesSP = "<div class='c-stats'> <div class='price'>" +(+steemUSD).toFixed(3)+"$" +"<div class='delta "+steemDelta+"'>"+steemChange +"</div></div><div class='name'>STEEM (STEEM)</div></div>";
-        let totalSBD = "<div class='total-value sep'>"+(youGet / 2).toFixed(2)+" SBD TOTAL</div>";
-        let totalSP = "<div class='total-value '>"+(youGetSP).toFixed(2)+" SP TOTAL</div>";
-        let popup ='<div class="ses-price-popup">'+priceChangesSBD+totalSBD+priceChangesSP+totalSP+'<div class="grad-line"></div></div>';
+        let priceChangesSBD = "<div class='c-stats'> <div class='price'>" + (+sbdUSD).toFixed(3) + "$" + "<div class='delta " + sbdDelta + "'>" + sbdChange + "</div></div><div class='name'>STEEM DOLLARS (SBD)</div></div>";
+        let priceChangesSP = "<div class='c-stats'> <div class='price'>" + (+steemUSD).toFixed(3) + "$" + "<div class='delta " + steemDelta + "'>" + steemChange + "</div></div><div class='name'>STEEM (STEEM)</div></div>";
+        let totalSBD = "<div class='total-value sep'>" + (youGet / 2).toFixed(2) + " SBD TOTAL</div>";
+        let totalSP = "<div class='total-value '>" + (youGetSP).toFixed(2) + " SP TOTAL</div>";
+        let popup = '<div class="ses-price-popup">' + priceChangesSBD + totalSBD + priceChangesSP + totalSP + '<div class="grad-line"></div></div>';
 
-        let prices = "( " + (youGetSBD).toFixed(2) + " USD  , " + (youGetSP).toFixed(2) + " SP )"+popup;
+        let prices = "( " + (youGetSBD).toFixed(2) + " USD  , " + (youGetSP).toFixed(2) + " SP )" + popup;
         if (post.find(".convertedValue").length > 0) {
             // console.log("added prices")
             post.find(".convertedValue").html(prices);
@@ -137,51 +183,58 @@ function getSBD() {
 
     });
 }
-function getTabURL(){
+
+function getTabURL() {
     return window.location.href;
 }
-function hasURLChanged(){
+
+function hasURLChanged() {
     let newUrl = getTabURL();
-    if(oldUrl == newUrl){
+    if (oldUrl == newUrl) {
         return false;
-    }else{
+    } else {
         oldUrl = newUrl;
         return true;
     }
 }
 
-function onURLChange(){
+function onURLChange() {  
     resetPostUrlChange();
     updateUserVP();
-    let url = window.location.href.split("/");   
-    let inFeed = _.contains(url,"feed");
-    let inNew = _.contains(url,"created");
-    let inTrending = _.contains(url,"trending");
-    let inWallet = _.contains(url,"transfers");
+    updateWhitelist();
+    updateBlacklist();
+    let url = window.location.href.split("/");
+    let inFeed = _.contains(url, "feed");
+    let inNew = _.contains(url, "created");
+    let inTrending = _.contains(url, "trending");
+    let inWallet = _.contains(url, "transfers");
     let inProfile = (url.length >= 4) && url[3].indexOf("@") > -1;
-    let inProfileFeed = (url.length == 4) && url[3].indexOf("@") > -1 || (url.length == 5) && url[3].indexOf("@") > -1 && url[4] == "feed"; 
+    let inProfileFeed = (url.length == 4) && url[3].indexOf("@") > -1 || (url.length == 5) && url[3].indexOf("@") > -1 && url[4] == "feed";
     //console.log("feed",inFeed," new",inNew," in trending", inTrending,"in wallet", inWallet,"In profile",inProfile,"in profile feed",inProfileFeed);
-    if(inProfileFeed){
-       setTimeout(()=>{ addResteemFilter()},150);
+    if (inProfileFeed) {
+        setTimeout(() => {
+            addResteemFilter()
+        }, 150);
     }
     throtledUpdatePrices();
 }
 
-function resetPostUrlChange(){
-    hideResteems=false;
+function resetPostUrlChange() {
+    hideResteems = false;
     $("#ses-hide-resteem").remove();
 }
 
 var resteemIcon = '<span id="ses-hide-resteem" class="Icon reblog" style="display: block; "><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve"><path d="M448,192l-128,96v-64H128v128h248c4.4,0,8,3.6,8,8v48c0,4.4-3.6,8-8,8H72c-4.4,0-8-3.6-8-8V168c0-4.4,3.6-8,8-8h248V96 L448,192z"></path></svg></span>';
-function addResteemFilter(){
+
+function addResteemFilter() {
     //console.log("add resteem button");
-   
+
     let header = $(".articles__header");
-    if(header.length){
-        if(!header.find(".reblog").length){
+    if (header.length) {
+        if (!header.find(".reblog").length) {
             header.append(resteemIcon);
             hideResteems = false;
-            $("#ses-hide-resteem").on("click tap",function(){
+            $("#ses-hide-resteem").on("click tap", function () {
                 hideResteems = !hideResteems;
                 $("#ses-hide-resteem").toggleClass("active");
                 updateResteems();
@@ -189,42 +242,133 @@ function addResteemFilter(){
         }
     }
 }
-function updateResteems(){
-   //console.log("Updated resteems");
-   
+
+function updateResteems() {
+    //console.log("Updated resteems");
+
     let articles = $(".articles__summary");
-    $.each(articles,function (key, el) {
+    $.each(articles, function (key, el) {
         let article = $(el);
-        if(hideResteems){
-            if(article.find(".articles__resteem").length > 0){
+        if (hideResteems) {
+            if (article.find(".articles__resteem").length > 0) {
                 article.addClass("rest-hide");
             }
-        }else{
+        } else {
             article.removeClass("rest-hide");
         }
     });
 }
 
-function updateUserVP(){
+function updateUserVP() {
     let progress = 0;
-    steem.api.getAccounts([localUser], function(err, result) {
-        var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
-         vpow = result[0].voting_power + (10000 * secondsago / 432000);
-         progress = Math.min(vpow / 100, 100);
-        let timeToFull = (100-progress)/0.0139344262295082;
-        let hours = Math.floor(timeToFull/60);
-        let minutes= Math.ceil(timeToFull%60);
-         let progressbar = '<div class="user-vp">'+
-         '  <div class="vp-value">'+progress.toFixed(2)+'% VP</div>'+
-         '  <div class="vp-progress"><div class="vp-progress-value" style="width:'+progress.toFixed(2)+'px;"></div></div>'+
-         '  <div class="vp-full-in">'+hours+'h '+minutes+'min till 100%</div>'+
-         '</div>';
-         let div =  $(".Header__top.header").find(".columns.shrink")
-         if(div.find(".user-vp").length>0){
-             div.find(".user-vp").remove();
-             div.prepend(progressbar);
-         }else{
-             div.prepend(progressbar);
-         }
-      });
+    steem.api.getAccounts([localUser], function (err, result) {
+        if(result[0]){
+            var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
+            vpow = result[0].voting_power + (10000 * secondsago / 432000);
+            progress = Math.min(vpow / 100, 100);
+            let timeToFull = (100 - progress) / 0.0139344262295082;
+            let hours = Math.floor(timeToFull / 60);
+            let minutes = Math.ceil(timeToFull % 60);
+            let progressbar = '<div class="user-vp">' +
+                '  <div class="vp-value">' + progress.toFixed(2) + '% VP</div>' +
+                '  <div class="vp-progress"><div class="vp-progress-value" style="width:' + progress.toFixed(2) + 'px;"></div></div>' +
+                '  <div class="vp-full-in">' + hours + 'h ' + minutes + 'min till 100%</div>' +
+                '</div>';
+            let div = $(".Header__top.header").find(".columns.shrink")
+            if (div.find(".user-vp").length > 0) {
+                div.find(".user-vp").remove();
+                div.prepend(progressbar);
+            } else {
+                div.prepend(progressbar);
+            }
+        }
+    });
+}
+
+// white list and black list
+function toggleWhitelist(name){
+    let list = {};
+    chrome.storage.local.get("whitelist", function(items){
+        //  items = [ { "yourBody": "myBody" } ]
+
+        if(!_.isEmpty(items.whitelist)){
+            list = items.whitelist;
+            if( _.has(list, name)){
+               list[name] = !list[name];
+            }else{
+                list[name] = true;
+            };
+        }else{
+            list[name] = true;
+        }
+
+       chrome.storage.local.set({ "whitelist": list }, function(a){        
+        });
+        updateWhitelist();
+    });
+}
+function toggleBlacklist(name){
+    let list = {};
+    chrome.storage.local.get("blacklist", function(items){
+        //  items = [ { "yourBody": "myBody" } ]
+
+        if(!_.isEmpty(items.blacklist)){
+            list = items.blacklist;
+            if( _.has(list, name)){
+               list[name] = !list[name];
+            }else{
+                list[name] = true;
+            };
+        }else{
+            list[name] = true;
+        }
+
+       chrome.storage.local.set({ "blacklist": list }, function(a){        
+        });
+        updateBlacklist();
+    });
+}
+function updateWhitelist(){
+    let whitelist={};
+    chrome.storage.local.get("whitelist", function(items){
+        whitelist = items.whitelist;
+        if(!_.isEmpty(whitelist)){
+            let buttons = $(".wl-button");
+            $.each(buttons,(idx, button)=>{
+                let usrName = $(button).attr("data-user");
+                if( _.has(whitelist,usrName)){
+                    if(whitelist[usrName] ){
+                        $(button).addClass("active");
+                    }else{
+                        $(button).removeClass("active");
+                    }
+                    
+                }else{
+                    $(button).removeClass("active");
+                };
+            });
+        }
+    });
+}
+function updateBlacklist(){
+    let blacklist={};
+    chrome.storage.local.get("blacklist", function(items){
+        blacklist = items.blacklist;
+        if(!_.isEmpty(blacklist)){
+            let buttons = $(".bl-button");
+            $.each(buttons,(idx, button)=>{
+                let usrName = $(button).attr("data-user");
+                if( _.has(blacklist,usrName)){
+                    if(blacklist[usrName] ){
+                        $(button).addClass("active");
+                    }else{
+                        $(button).removeClass("active");
+                    }
+                    
+                }else{
+                    $(button).removeClass("active");
+                };
+            });
+        }
+    });
 }

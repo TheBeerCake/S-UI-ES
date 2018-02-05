@@ -11,6 +11,7 @@ var oldUrl = "";
 var lastPostCount = 0;
 var hideResteems = false;
 var localUser = "";
+var filterWhite = false;
 
 var throtledDOMChanges = _.throttle(postListChanges, 1000);
 var throtledUpdatePrices = _.throttle(updatePrices, 300);
@@ -61,6 +62,9 @@ $(document).ready(function () {
     $.initialize('.Voting__inner', function () {
         throtledUpdatePrices();
         throtledUpdateResteems();
+        setTimeout(() => {
+            filterWhitelist();
+        }, 100);
         //console.log("detected new posts");
 
     });
@@ -81,7 +85,7 @@ $(document).ready(function () {
         blButton = $(blButton);
         wlButton.on("tap click", () => {
             toggleWhitelist(authorName);
-    
+
         });
         blButton.on("tap click", () => {
             toggleBlacklist(authorName);
@@ -198,7 +202,7 @@ function hasURLChanged() {
     }
 }
 
-function onURLChange() {  
+function onURLChange() {
     resetPostUrlChange();
     updateUserVP();
     updateWhitelist();
@@ -213,7 +217,8 @@ function onURLChange() {
     //console.log("feed",inFeed," new",inNew," in trending", inTrending,"in wallet", inWallet,"In profile",inProfile,"in profile feed",inProfileFeed);
     if (inProfileFeed) {
         setTimeout(() => {
-            addResteemFilter()
+            addResteemFilter();
+            addlistFilters();
         }, 150);
     }
     throtledUpdatePrices();
@@ -262,7 +267,7 @@ function updateResteems() {
 function updateUserVP() {
     let progress = 0;
     steem.api.getAccounts([localUser], function (err, result) {
-        if(result[0]){
+        if (result[0]) {
             var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
             vpow = result[0].voting_power + (10000 * secondsago / 432000);
             progress = Math.min(vpow / 100, 100);
@@ -286,89 +291,142 @@ function updateUserVP() {
 }
 
 // white list and black list
-function toggleWhitelist(name){
+function toggleWhitelist(name) {
     let list = {};
-    chrome.storage.local.get("whitelist", function(items){
+    chrome.storage.local.get("whitelist", function (items) {
         //  items = [ { "yourBody": "myBody" } ]
 
-        if(!_.isEmpty(items.whitelist)){
+        if (!_.isEmpty(items.whitelist)) {
             list = items.whitelist;
-            if( _.has(list, name)){
-               list[name] = !list[name];
-            }else{
+            if (_.has(list, name)) {
+                list[name] = !list[name];
+            } else {
                 list[name] = true;
             };
-        }else{
+        } else {
             list[name] = true;
         }
 
-       chrome.storage.local.set({ "whitelist": list }, function(a){        
-        });
+        chrome.storage.local.set({
+            "whitelist": list
+        }, function (a) {});
         updateWhitelist();
     });
 }
-function toggleBlacklist(name){
+
+function toggleBlacklist(name) {
     let list = {};
-    chrome.storage.local.get("blacklist", function(items){
+    chrome.storage.local.get("blacklist", function (items) {
         //  items = [ { "yourBody": "myBody" } ]
 
-        if(!_.isEmpty(items.blacklist)){
+        if (!_.isEmpty(items.blacklist)) {
             list = items.blacklist;
-            if( _.has(list, name)){
-               list[name] = !list[name];
-            }else{
+            if (_.has(list, name)) {
+                list[name] = !list[name];
+            } else {
                 list[name] = true;
             };
-        }else{
+        } else {
             list[name] = true;
         }
 
-       chrome.storage.local.set({ "blacklist": list }, function(a){        
-        });
+        chrome.storage.local.set({
+            "blacklist": list
+        }, function (a) {});
         updateBlacklist();
     });
 }
-function updateWhitelist(){
-    let whitelist={};
-    chrome.storage.local.get("whitelist", function(items){
+
+function updateWhitelist() {
+    let whitelist = {};
+    chrome.storage.local.get("whitelist", function (items) {
         whitelist = items.whitelist;
-        if(!_.isEmpty(whitelist)){
+        if (!_.isEmpty(whitelist)) {
             let buttons = $(".wl-button");
-            $.each(buttons,(idx, button)=>{
+            $.each(buttons, (idx, button) => {
                 let usrName = $(button).attr("data-user");
-                if( _.has(whitelist,usrName)){
-                    if(whitelist[usrName] ){
+                if (_.has(whitelist, usrName)) {
+                    if (whitelist[usrName]) {
                         $(button).addClass("active");
-                    }else{
+                    } else {
                         $(button).removeClass("active");
                     }
-                    
-                }else{
+
+                } else {
                     $(button).removeClass("active");
                 };
             });
         }
     });
 }
-function updateBlacklist(){
-    let blacklist={};
-    chrome.storage.local.get("blacklist", function(items){
+
+// function isWhitelisted(name) {
+//     var found = false;
+//     chrome.storage.local.get("whitelist", function (items) {
+
+//         let whitelist = items.whitelist;
+
+//         if (_.has(whitelist, name)) {
+//             found = true;
+//             return found;
+//         } else {
+//             found = false;
+//             return found;
+//         }
+//     });
+// }
+
+function updateBlacklist() {
+    let blacklist = {};
+    chrome.storage.local.get("blacklist", function (items) {
         blacklist = items.blacklist;
-        if(!_.isEmpty(blacklist)){
+        if (!_.isEmpty(blacklist)) {
             let buttons = $(".bl-button");
-            $.each(buttons,(idx, button)=>{
+            $.each(buttons, (idx, button) => {
                 let usrName = $(button).attr("data-user");
-                if( _.has(blacklist,usrName)){
-                    if(blacklist[usrName] ){
+                if (_.has(blacklist, usrName)) {
+                    if (blacklist[usrName]) {
                         $(button).addClass("active");
-                    }else{
+                    } else {
                         $(button).removeClass("active");
                     }
-                    
-                }else{
+
+                } else {
                     $(button).removeClass("active");
                 };
             });
         }
     });
+}
+
+function addlistFilters() {
+    console.log("add whitelist filter");
+
+    $("ses-toggle-button").remove();
+    var whitelistToggle = '<span id="ses-toggle-whitelist" class="ses-toggle-button" ><div class="ses-icon"></span>';
+    whitelistToggle = $(whitelistToggle);
+    whitelistToggle.on("tap click", () => {
+        $("#ses-toggle-whitelist").toggleClass("active");
+        filterWhite = $("#ses-toggle-whitelist").hasClass("active");
+        console.log("filter white", filterWhite);
+
+        filterWhitelist();
+    });
+    $(".articles__header").append(whitelistToggle);
+}
+
+function filterWhitelist() {
+    if (filterWhite) {
+
+        let articles = $(".articles__summary");
+        $.each(articles, function (key, el) {
+            let article = $(el);
+            let authorName = article.find(".author").find("a").text().split(" ")[0];
+            if (!article.find(".wl-button.active").length) {
+                article.addClass("whitelist-hide");
+            }
+        });
+    } else {
+        $(".articles__summary").removeClass("whitelist-hide");
+    }
 }

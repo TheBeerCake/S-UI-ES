@@ -210,6 +210,7 @@ function onURLChange() {
     let url = window.location.href.split("/");
     let inFeed = _.contains(url, "feed");
     let inNew = _.contains(url, "created");
+    let inHot = _.contains(url, "hot");
     let inTrending = _.contains(url, "trending");
     let inWallet = _.contains(url, "transfers");
     let inProfile = (url.length >= 4) && url[3].indexOf("@") > -1;
@@ -218,8 +219,10 @@ function onURLChange() {
     if (inProfileFeed) {
         setTimeout(() => {
             addResteemFilter();
-            addlistFilters();
         }, 150);
+    }
+    if(inFeed || inNew || inHot || inTrending){
+        addlistFilters();
     }
     throtledUpdatePrices();
 }
@@ -267,7 +270,7 @@ function updateResteems() {
 function updateUserVP() {
     let progress = 0;
     steem.api.getAccounts([localUser], function (err, result) {
-        if (result[0]) {
+        if (result) {
             var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
             vpow = result[0].voting_power + (10000 * secondsago / 432000);
             progress = Math.min(vpow / 100, 100);
@@ -400,15 +403,15 @@ function updateBlacklist() {
 }
 
 function addlistFilters() {
-    console.log("add whitelist filter");
+    // console.log("add whitelist filter");
 
-    $("ses-toggle-button").remove();
+    $(".ses-toggle-button").remove();
     var whitelistToggle = '<span id="ses-toggle-whitelist" class="ses-toggle-button" ><div class="ses-icon"></span>';
     whitelistToggle = $(whitelistToggle);
     whitelistToggle.on("tap click", () => {
         $("#ses-toggle-whitelist").toggleClass("active");
         filterWhite = $("#ses-toggle-whitelist").hasClass("active");
-        console.log("filter white", filterWhite);
+        // console.log("filter white", filterWhite);
 
         filterWhitelist();
     });

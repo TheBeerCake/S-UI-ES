@@ -12,6 +12,7 @@ var lastPostCount = 0;
 var hideResteems = false;
 var localUser = "";
 var filterWhite = false;
+var filterBlack = false;
 
 var throtledDOMChanges = _.throttle(postListChanges, 1000);
 var throtledUpdatePrices = _.throttle(updatePrices, 300);
@@ -222,7 +223,8 @@ function onURLChange() {
         }, 150);
     }
     if(inFeed || inNew || inHot || inTrending){
-        var filterWhite = false;
+        filterWhite = false;
+        filterBlack = false;
         addlistFilters();
     }
     throtledUpdatePrices();
@@ -298,6 +300,7 @@ function updateUserVP() {
             }
         }
     });
+    
 }
 
 // white list and black list
@@ -414,6 +417,7 @@ function addlistFilters() {
 
     $(".ses-toggle-button").remove();
     var whitelistToggle = '<span id="ses-toggle-whitelist" class="ses-toggle-button" ><div class="ses-icon"></span>';
+    var blacklistToggle = '<span id="ses-toggle-blacklist" class="ses-toggle-button" ><div class="ses-icon"></span>';
     whitelistToggle = $(whitelistToggle);
     whitelistToggle.on("tap click", () => {
         $("#ses-toggle-whitelist").toggleClass("active");
@@ -423,6 +427,7 @@ function addlistFilters() {
         filterWhitelist();
     });
     $(".articles__header").append(whitelistToggle);
+    $(".articles__header").append(blacklistToggle);
 }
 
 function filterWhitelist() {

@@ -227,7 +227,8 @@ article.articles {
     background-color: #06d6a9;
     background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 64 64' style='enable-background:new 0 0 64 64;' xml:space='preserve'%3E%3Cg%3E%3Cpath fill='#ffffff' d='M57.9,16.7l-2.1-2.1c-1.6-1.6-4.1-1.6-5.7,0L30.4,34.4c-1.6,1.6-4.1,1.6-5.7,0l-9.9-9.9c-1.6-1.6-4.1-1.6-5.7,0l-2.1,2.1 c-1.6,1.6-1.6,4.1,0,5.7L19.8,45l4.9,4.9c1.6,1.6,4.1,1.6,5.7,0l4.9-4.9l0,0l22.6-22.6C59.5,20.8,59.5,18.3,57.9,16.7z'/%3E%3C/g%3E%3C/svg%3E%0A");
 }
-#ses-toggle-whitelist{
+#ses-toggle-whitelist,
+#ses-toggle-blacklist{
     cursor:pointer;
     display:block;
     border:1px solid black;
@@ -237,12 +238,16 @@ article.articles {
     height: 22px;
     margin-left: 6px;
   }
-  #ses-toggle-whitelist:hover{
+  #ses-toggle-whitelist:hover,
+  #ses-toggle-blacklist:hover{
     opacity:1;
   }
   
   #ses-toggle-whitelist.active{
     border-color:#1FBF8F;
+  }
+  #ses-toggle-blacklist.active{
+    border-color:#dc3333;
   }
   #ses-toggle-whitelist .ses-icon{
     width:100%;
@@ -251,10 +256,19 @@ article.articles {
     background-repeat: no-repeat;
       background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 64 64' style='enable-background:new 0 0 64 64;' xml:space='preserve'%3E%3Cg%3E%3Cpath d='M57.9,16.7l-2.1-2.1c-1.6-1.6-4.1-1.6-5.7,0L30.4,34.4c-1.6,1.6-4.1,1.6-5.7,0l-9.9-9.9c-1.6-1.6-4.1-1.6-5.7,0l-2.1,2.1 c-1.6,1.6-1.6,4.1,0,5.7L19.8,45l4.9,4.9c1.6,1.6,4.1,1.6,5.7,0l4.9-4.9l0,0l22.6-22.6C59.5,20.8,59.5,18.3,57.9,16.7z'/%3E%3C/g%3E%3C/svg%3E%0A");
   }
+  #ses-toggle-blacklist .ses-icon{
+    width:100%;
+    height:100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- Generator: Adobe Illustrator 22.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0%29 --%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 64 64' style='enable-background:new 0 0 64 64;' xml:space='preserve'%3E%3Cpath d='M32,41.6L32,41.6c-2.5,0-4.7-2.3-5-5.4l-2.4-22.1c-0.4-3.7,1.9-7.1,5-7.1h4.9c3.1,0,5.4,3.3,5,7.1L37,36.2 C36.7,39.3,34.5,41.6,32,41.6z'/%3E%3Ccircle cx='32' cy='51.5' r='6.5'/%3E%3C/svg%3E%0A");
+  }
   #ses-toggle-whitelist.active .ses-icon{
         background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 64 64' fill='#1FBF8F' style='enable-background:new 0 0 64 64;' xml:space='preserve'%3E%3Cg%3E%3Cpath d='M57.9,16.7l-2.1-2.1c-1.6-1.6-4.1-1.6-5.7,0L30.4,34.4c-1.6,1.6-4.1,1.6-5.7,0l-9.9-9.9c-1.6-1.6-4.1-1.6-5.7,0l-2.1,2.1 c-1.6,1.6-1.6,4.1,0,5.7L19.8,45l4.9,4.9c1.6,1.6,4.1,1.6,5.7,0l4.9-4.9l0,0l22.6-22.6C59.5,20.8,59.5,18.3,57.9,16.7z'/%3E%3C/g%3E%3C/svg%3E%0A  ");
   }
-
+  #ses-toggle-blacklist.active .ses-icon{
+    background-image: url("data:image/svg+xml,%3C%3Fxml version='1.0' encoding='utf-8'%3F%3E%3C!-- , SVG Export Plug-In . SVG Version: 6.00 Build 0%29 --%3E%3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' viewBox='0 0 64 64' fill='#dc3333' style='enable-background:new 0 0 64 64;' xml:space='preserve'%3E%3Cpath d='M32,41.6L32,41.6c-2.5,0-4.7-2.3-5-5.4l-2.4-22.1c-0.4-3.7,1.9-7.1,5-7.1h4.9c3.1,0,5.4,3.3,5,7.1L37,36.2 C36.7,39.3,34.5,41.6,32,41.6z'/%3E%3Ccircle cx='32' cy='51.5' fill='#dc3333' r='6.5'/%3E%3C/svg%3E%0A");
+  }
 /* gradients */
 
 @-webkit-keyframes gradient-shift {
@@ -302,6 +316,12 @@ article.articles {
         margin-right: 13px;
     }
     #ses-toggle-whitelist{
+        display: block;
+        margin-top: -5px;
+        margin-right: 3px;
+    
+    }
+    #ses-toggle-blacklist{
         display: block;
         margin-top: -5px;
         margin-right: 3px;

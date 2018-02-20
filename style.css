@@ -140,6 +140,9 @@
 .whitelist-hide {
     display: none !important;
 }
+.blacklist-hide {
+    display: none !important;
+}
 
 article.articles {
     min-height: 100vh;
@@ -297,5 +300,11 @@ article.articles {
         display: block;
         margin-top: -5px;
         margin-right: 13px;
+    }
+    #ses-toggle-whitelist{
+        display: block;
+        margin-top: -5px;
+        margin-right: 3px;
+    
     }
 }

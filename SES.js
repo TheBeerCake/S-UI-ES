@@ -1,5 +1,5 @@
 steem.api.setOptions({
-    websocket: 'wss://rpc.buildteam.io'
+    websocket: 'wss://rpc.steemviz.com'
 });
 var steemUSD,
     sbdUSD = 0;
@@ -222,6 +222,7 @@ function onURLChange() {
         }, 150);
     }
     if(inFeed || inNew || inHot || inTrending){
+        var filterWhite = false;
         addlistFilters();
     }
     throtledUpdatePrices();
@@ -269,25 +270,31 @@ function updateResteems() {
 
 function updateUserVP() {
     let progress = 0;
-    steem.api.getAccounts([localUser], function (err, result) {
-        if (result) {
-            var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
-            vpow = result[0].voting_power + (10000 * secondsago / 432000);
-            progress = Math.min(vpow / 100, 100);
-            let timeToFull = (100 - progress) / 0.0139344262295082;
-            let hours = Math.floor(timeToFull / 60);
-            let minutes = Math.ceil(timeToFull % 60);
-            let progressbar = '<div class="user-vp">' +
-                '  <div class="vp-value">' + progress.toFixed(2) + '% VP</div>' +
-                '  <div class="vp-progress"><div class="vp-progress-value" style="width:' + progress.toFixed(2) + 'px;"></div></div>' +
-                '  <div class="vp-full-in">' + hours + 'h ' + minutes + 'min till 100%</div>' +
-                '</div>';
-            let div = $(".Header__top.header").find(".columns.shrink")
-            if (div.find(".user-vp").length > 0) {
-                div.find(".user-vp").remove();
-                div.prepend(progressbar);
-            } else {
-                div.prepend(progressbar);
+    steem.api.getAccounts([localUser], function (err, result) {  
+       
+        if (result){     
+            if (result.length) {
+                var secondsago = (new Date - new Date(result[0].last_vote_time + "Z")) / 1000;
+                vpow = result[0].voting_power + (10000 * secondsago / 432000);
+              
+                progress = Math.min(vpow / 100, 100);
+              
+                
+                let timeToFull = (100 - progress) / 0.0139344262295082;
+                let hours = Math.floor(timeToFull / 60);
+                let minutes = Math.ceil(timeToFull % 60);
+                let progressbar = '<div class="user-vp">' +
+                    '  <div class="vp-value">' + progress.toFixed(2) + '% VP</div>' +
+                    '  <div class="vp-progress"><div class="vp-progress-value" style="width:' + progress.toFixed(2) + 'px;"></div></div>' +
+                    '  <div class="vp-full-in">' + hours + 'h ' + minutes + 'min till 100%</div>' +
+                    '</div>';
+                let div = $(".Header__top.header").find(".columns.shrink")
+                if (div.find(".user-vp").length > 0) {
+                    div.find(".user-vp").remove();
+                    div.prepend(progressbar);
+                } else {
+                    div.prepend(progressbar);
+                }
             }
         }
     });

@@ -65,6 +65,7 @@ $(document).ready(function () {
         throtledUpdateResteems();
         setTimeout(() => {
             filterWhitelist();
+            filterBlacklist();
         }, 100);
         //console.log("detected new posts");
 
@@ -419,12 +420,16 @@ function addlistFilters() {
     var whitelistToggle = '<span id="ses-toggle-whitelist" class="ses-toggle-button" ><div class="ses-icon"></span>';
     var blacklistToggle = '<span id="ses-toggle-blacklist" class="ses-toggle-button" ><div class="ses-icon"></span>';
     whitelistToggle = $(whitelistToggle);
+    blacklistToggle = $(blacklistToggle);
     whitelistToggle.on("tap click", () => {
         $("#ses-toggle-whitelist").toggleClass("active");
         filterWhite = $("#ses-toggle-whitelist").hasClass("active");
-        // console.log("filter white", filterWhite);
-
         filterWhitelist();
+    });
+    blacklistToggle.on("tap click", () => {
+        $("#ses-toggle-blacklist").toggleClass("active");
+        filterBlack = $("#ses-toggle-blacklist").hasClass("active");
+        filterBlacklist();
     });
     $(".articles__header").append(whitelistToggle);
     $(".articles__header").append(blacklistToggle);
@@ -432,7 +437,6 @@ function addlistFilters() {
 
 function filterWhitelist() {
     if (filterWhite) {
-
         let articles = $(".articles__summary");
         $.each(articles, function (key, el) {
             let article = $(el);
@@ -443,5 +447,19 @@ function filterWhitelist() {
         });
     } else {
         $(".articles__summary").removeClass("whitelist-hide");
+    }
+}
+function filterBlacklist() {
+    if (filterBlack) {
+        let articles = $(".articles__summary");
+        $.each(articles, function (key, el) {
+            let article = $(el);
+            let authorName = article.find(".author").find("a").text().split(" ")[0];
+            if (article.find(".bl-button.active").length) {
+                article.addClass("blacklist-hide");
+            }
+        });
+    } else {
+        $(".articles__summary").removeClass("blacklist-hide");
     }
 }

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Test Extension Options</title>
+  <link rel="stylesheet" type="text/css" href="vendor/jquery.tag-editor.css">
+  <style>
+  body{
+    background: linear-gradient(135deg, rgba(85,239,203,1) 0%,rgba(30,87,153,1) 0%,rgba(85,239,203,1) 0%,rgba(91,202,255,1) 100%);
+    color: white;
+    width: 800px;
+    padding: 40px;
+  }
+  .button {
+  width: 150px;
+  margin: 10px 0;
+  padding: 20px;
+  border: 2px solid #f7f7f7;
+  text-align: center;
+  text-transform: uppercase;
+  position: relative;
+  overflow:hidden;
+  transition: .3s;
+  }
+  .button::after{
+    position: absolute;
+    transition: .3s;
+    content: '';
+    width: 0;
+    left: 50%;
+    bottom: 0;
+    height: 3px;
+    background: #f7f7f7;
+    height: 120%;
+    left: -10%;
+    transform: skewX(15deg);
+    z-index: -1;
+  }
+  .button:hover{
+    color: #5bcaff;
+    cursor: pointer;
+  }
+  .button:hover::after{
+    left: -10%;
+      width: 120%;
+  }
+  .button-wrap{
+    display: flex;
+    justify-content: flex-end;
+  }
+  .whitelist{
+    margin-bottom: 40px;
+  }
+
+  .w-status,
+  .b-status{
+
+    opacity: 0;
+
+    transition: all 0.2s ease-in-out;
+    font-size: 14px;
+  }
+  .w-status.active,
+  .b-status.active{
+    opacity: 1;
+
+    transition: all 0.2s ease-in-out;
+  }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="whitelist">
+        <h2>Edit Whitelist</h2>
+        <textarea name="" id="whitelist" cols="30" rows="2"></textarea>
+        <span class="w-status">Whitelist has been saved</span>
+        <div class="button-wrap"><div class="button" id="save-wl">SAVE WHITELIST</div></div> 
+    </div>
+    <div class="blacklist">
+        <h2>Edit Blacklist</h2>
+        <textarea name="" id="blacklist" cols="30" rows="2"></textarea>
+        <span class="b-status">Blacklist has been saved</span>
+       <div class="button-wrap"><div class="button" id="save-bl">SAVE BLACKLIST</div></div> 
+    </div>
+
+  </div>
+
+
+  <script src="vendor/jquery-1.12.4.min.js"></script>
+  <script src="vendor/jquery.caret.min.js"></script>
+  <script src="vendor/jquery.tag-editor.min.js"></script>
+  <script src="vendor/underscore-min.js"></script>
+  <script src="options.js"></script>
+</body>
+</html>

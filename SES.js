@@ -291,7 +291,7 @@ function updateUserVP() {
                     '  <div class="vp-progress"><div class="vp-progress-value" style="width:' + progress.toFixed(2) + 'px;"></div></div>' +
                     '  <div class="vp-full-in">' + hours + 'h ' + minutes + 'min till 100%</div>' +
                     '</div>';
-                let div = $(".Header__top.header").find(".columns.shrink")
+                let div = $(".Header__nav").find(".Header__buttons");
                 if (div.find(".user-vp").length > 0) {
                     div.find(".user-vp").remove();
                     div.prepend(progressbar);

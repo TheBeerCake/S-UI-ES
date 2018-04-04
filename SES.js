@@ -1,5 +1,5 @@
 steem.api.setOptions({
-    websocket: 'wss://rpc.steemviz.com'
+    websocket: 'wss://steemd.privex.io'
 });
 var steemUSD,
     sbdUSD = 0;

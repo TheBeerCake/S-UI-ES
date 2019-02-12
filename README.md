@@ -12,6 +12,12 @@ This is a chrome extension that improves steemit usability.
 
 <img src="https://i.imgur.com/unDtJ9R.gif">
 
+-----------------
+
+You can also find the extension on chrome store:
+
+<a href="https://chrome.google.com/webstore/detail/steemit-uiux-enhancement/nilebkfchinbmoiackakfpjhfchdpcgc/">https://chrome.google.com/webstore/detail/steemit-uiux-enhancement/nilebkfchinbmoiackakfpjhfchdpcgc/</a>
+
 Contributors
 -----------------
 beercake
